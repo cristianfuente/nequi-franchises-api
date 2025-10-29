@@ -12,6 +12,8 @@ public interface FranchiseRepository {
 
     Flux<Franchise> findAll();
 
+    Mono<Franchise> update(Franchise franchise);
+
     Mono<Void> deleteById(String id);
 
 }

@@ -4,12 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class Franchise {
 
     private final String id;
     private final String name;
-    private final String country;
-    private final Integer totalBranches;
+    private final Long createdAt;
+    private final Long updatedAt;
 
 }
