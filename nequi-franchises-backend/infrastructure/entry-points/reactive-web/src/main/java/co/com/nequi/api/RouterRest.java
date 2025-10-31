@@ -5,6 +5,7 @@ import co.com.nequi.api.handler.FranchiseHandler;
 import co.com.nequi.api.handler.ProductHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.server.HandlerFilterFunction;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -15,8 +16,9 @@ public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(FranchiseHandler franchiseHandler,
                                                          BranchHandler branchHandler,
-                                                         ProductHandler productHandler) {
-        return route().path("/v1", builder -> builder
+                                                         ProductHandler productHandler,
+                                                         HandlerFilterFunction<ServerResponse, ServerResponse> errorFilter) {
+        return route().filter(errorFilter).path("/v1", builder -> builder
                 .POST("/franchises", franchiseHandler::create)
                 .GET("/franchises/{fid}", franchiseHandler::getById)
                 .GET("/franchises", franchiseHandler::getAll)
