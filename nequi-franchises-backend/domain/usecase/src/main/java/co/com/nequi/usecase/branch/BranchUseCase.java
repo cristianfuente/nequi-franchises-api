@@ -20,19 +20,15 @@ public class BranchUseCase {
     private final FranchiseRepository franchiseRepository;
 
     public Mono<Branch> createBranch(String franchiseId, Branch draft) {
-        FunctionUtils.validateNotEmptyValue(draft.getName(), BRANCH_NAME_REQUIRED);
-
-        return ReactorChecks.notFoundIfEmpty(franchiseRepository.findById(franchiseId), FRANCHISE_NOT_FOUND)
-                .flatMap(f -> Mono.defer(() -> {
-                    long now = FunctionUtils.now();
-                    var branch = draft.toBuilder()
-                            .id(FunctionUtils.newId())
-                            .franchiseId(franchiseId)
-                            .createdAt(now)
-                            .updatedAt(now)
-                            .build();
-                    return branchRepository.save(branch);
-                }));
+        return ReactorChecks.validateNotEmptyValue(draft.getName(), BRANCH_NAME_REQUIRED)
+                .then(ReactorChecks.notFoundIfEmpty(franchiseRepository.findById(franchiseId), FRANCHISE_NOT_FOUND))
+                .then(branchRepository.save(
+                        draft.toBuilder()
+                                .id(FunctionUtils.newId())
+                                .franchiseId(franchiseId)
+                                .createdAt(FunctionUtils.now())
+                                .updatedAt(FunctionUtils.now())
+                                .build()));
     }
 
     public Mono<Branch> getById(String branchId) {
@@ -48,20 +44,19 @@ public class BranchUseCase {
     }
 
     public Mono<Branch> updateName(String branchId, String newName) {
-        FunctionUtils.validateNotEmptyValue(newName, BRANCH_NAME_REQUIRED);
-
-        return getById(branchId)
-                .flatMap(b -> {
-                    var updated = b.toBuilder()
-                            .name(newName)
-                            .updatedAt(FunctionUtils.now())
-                            .build();
-                    return branchRepository.update(updated);
-                });
+        return ReactorChecks.validateNotEmptyValue(newName, BRANCH_NAME_REQUIRED)
+                .then(getById(branchId)
+                        .flatMap(branch ->
+                                branchRepository.update(
+                                        branch.toBuilder()
+                                                .name(newName)
+                                                .updatedAt(FunctionUtils.now())
+                                                .build())));
     }
 
     public Mono<Void> delete(String branchId) {
-        return getById(branchId).then(branchRepository.deleteById(branchId));
+        return ReactorChecks.notFoundIfEmpty(getById(branchId), BRANCH_NOT_FOUND)
+                .then(branchRepository.deleteById(branchId));
     }
 
 }

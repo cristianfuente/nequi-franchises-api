@@ -17,16 +17,12 @@ public class FranchiseUseCase {
     private final FranchiseRepository franchiseRepository;
 
     public Mono<Franchise> createFranchise(Franchise draft) {
-        FunctionUtils.validateNotEmptyValue(draft.getName(), FRANCHISE_NAME_REQUIRED);
-
-        long now = FunctionUtils.now();
-        Franchise newFranchise = draft.toBuilder()
-                .id(FunctionUtils.newId())
-                .createdAt(now)
-                .updatedAt(now)
-                .build();
-
-        return franchiseRepository.save(newFranchise);
+        return ReactorChecks.validateNotEmptyValue(draft.getName(), FRANCHISE_NAME_REQUIRED)
+                .then(franchiseRepository.save(draft.toBuilder()
+                        .id(FunctionUtils.newId())
+                        .createdAt(FunctionUtils.now())
+                        .updatedAt(FunctionUtils.now())
+                        .build()));
     }
 
     public Mono<Franchise> getById(String franchiseId) {
@@ -38,20 +34,17 @@ public class FranchiseUseCase {
     }
 
     public Mono<Franchise> updateName(String franchiseId, String newName) {
-        FunctionUtils.validateNotEmptyValue(newName, FRANCHISE_NAME_REQUIRED);
-
-        return getById(franchiseId)
-                .flatMap(franchise -> {
-                    var updated = franchise.toBuilder()
-                            .name(newName)
-                            .updatedAt(FunctionUtils.now())
-                            .build();
-                    return franchiseRepository.update(updated);
-                });
+        return ReactorChecks.validateNotEmptyValue(newName, FRANCHISE_NAME_REQUIRED)
+                .then(getById(franchiseId)
+                        .flatMap(franchise -> franchiseRepository.update(franchise.toBuilder()
+                                .name(newName)
+                                .updatedAt(FunctionUtils.now())
+                                .build())));
     }
 
     public Mono<Void> delete(String franchiseId) {
-        return getById(franchiseId).then(franchiseRepository.deleteById(franchiseId));
+        return ReactorChecks.notFoundIfEmpty(getById(franchiseId), FRANCHISE_NOT_FOUND)
+                .then(franchiseRepository.deleteById(franchiseId));
     }
 
 }

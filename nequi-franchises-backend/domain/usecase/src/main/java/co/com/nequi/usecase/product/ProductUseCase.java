@@ -1,10 +1,8 @@
 package co.com.nequi.usecase.product;
 
-import co.com.nequi.model.branch.Branch;
 import co.com.nequi.model.branch.gateways.BranchRepository;
 import co.com.nequi.model.product.Product;
 import co.com.nequi.model.product.gateways.ProductRepository;
-import co.com.nequi.usecase.exception.ResourceNotFoundException;
 import co.com.nequi.usecase.exception.ValidationException;
 import co.com.nequi.usecase.util.FunctionUtils;
 import co.com.nequi.usecase.util.ReactorChecks;
@@ -28,20 +26,16 @@ public class ProductUseCase {
     private final BranchRepository branchRepository;
 
     public Mono<Product> createProduct(String branchId, Product draft) {
-        validateProductData(draft.getName(), draft.getStock());
-
-        return ReactorChecks.notFoundIfEmpty(branchRepository.findById(branchId), BRANCH_NOT_FOUND)
-                .flatMap(br -> Mono.defer(() -> {
-                    long now = FunctionUtils.now();
-                    var p = draft.toBuilder()
-                            .id(FunctionUtils.newId())
-                            .franchiseId(br.getFranchiseId())
-                            .branchId(branchId)
-                            .createdAt(now)
-                            .updatedAt(now)
-                            .build();
-                    return productRepository.save(p);
-                }));
+        return validateProductData(draft.getName(), draft.getStock()).then(
+                ReactorChecks.notFoundIfEmpty(branchRepository.findById(branchId), BRANCH_NOT_FOUND)
+                        .map(branch -> draft.toBuilder()
+                                .id(FunctionUtils.newId())
+                                .franchiseId(branch.getFranchiseId())
+                                .branchId(branchId)
+                                .createdAt(FunctionUtils.now())
+                                .updatedAt(FunctionUtils.now())
+                                .build()
+                        ).flatMap(productRepository::save));
     }
 
     public Mono<Product> getById(String productId) {
@@ -61,28 +55,30 @@ public class ProductUseCase {
     }
 
     public Mono<Product> updateName(String productId, String newName) {
-        FunctionUtils.validateNotEmptyValue(newName, PRODUCT_NAME_REQUIRED);
-
-        return getById(productId)
-                .flatMap(p -> productRepository.update(
-                        p.toBuilder()
-                                .name(newName)
-                                .updatedAt(FunctionUtils.now())
-                                .build()
-                ));
+        return ReactorChecks.validateNotEmptyValue(newName, PRODUCT_NAME_REQUIRED).then(
+                getById(productId)
+                        .flatMap(p -> productRepository.update(
+                                p.toBuilder()
+                                        .name(newName)
+                                        .updatedAt(FunctionUtils.now())
+                                        .build()
+                        )));
     }
 
     public Mono<Product> getMaxStockByBranch(String branchId) {
-        return productRepository.findTopByBranchId(branchId)
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException(NO_PRODUCTS_IN_BRANCH)));
+        return ReactorChecks.notFoundIfEmpty(productRepository
+                .findTopByBranchId(branchId), NO_PRODUCTS_IN_BRANCH);
     }
 
     public Mono<Product> changeStock(String productId, int delta, String idempotencyKey) {
-        if (delta == 0) return getById(productId);
-        FunctionUtils.validateNotEmptyValue(idempotencyKey, IDEMPOTENCY_KEY_REQUIRED);
-
-        return getById(productId)
-                .flatMap(p -> productRepository.changeStockAtomic(p.getId(), delta, idempotencyKey));
+        return ReactorChecks.validateNotEmptyValue(idempotencyKey, IDEMPOTENCY_KEY_REQUIRED)
+                .flatMap(v -> {
+                    if (delta == 0) {
+                        return getById(productId);
+                    }
+                    return getById(productId)
+                            .flatMap(p -> productRepository.changeStockAtomic(p.getId(), delta, idempotencyKey));
+                });
     }
 
     public Mono<Void> deleteByBranch(String branchId, String productId) {
@@ -91,18 +87,18 @@ public class ProductUseCase {
     }
 
     public Mono<Void> delete(String productId) {
-        return getById(productId).then(productRepository.deleteById(productId));
+        return ReactorChecks.notFoundIfEmpty(getById(productId), PRODUCT_NOT_FOUND)
+                .then(productRepository.deleteById(productId));
     }
 
-    private void validateStock(Integer stock) {
-        if (stock == null || stock < 0) {
-            throw new ValidationException(PRODUCT_STOCK_INVALID);
-        }
-    }
-
-    private void validateProductData(String name, Integer stock) {
-        FunctionUtils.validateNotEmptyValue(name, PRODUCT_NAME_REQUIRED);
-        validateStock(stock);
+    private Mono<Void> validateProductData(String name, Integer stock) {
+        return ReactorChecks.validateNotEmptyValue(name, PRODUCT_NAME_REQUIRED)
+                .flatMap(v -> {
+                    if (stock == null || stock < 0) {
+                        return Mono.error(new ValidationException(PRODUCT_STOCK_INVALID));
+                    }
+                    return Mono.empty();
+                });
     }
 
 }
