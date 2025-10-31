@@ -11,7 +11,7 @@ public final class ReactorChecks {
     }
 
     public static Mono<Void> validateNotEmptyValue(String value,
-                                             ExceptionMessage exceptionMessage) {
+                                                   ExceptionMessage exceptionMessage) {
         return Mono.defer(() -> {
             if (value == null || value.trim().isEmpty()) {
                 return Mono.error(new ValidationException(exceptionMessage));
