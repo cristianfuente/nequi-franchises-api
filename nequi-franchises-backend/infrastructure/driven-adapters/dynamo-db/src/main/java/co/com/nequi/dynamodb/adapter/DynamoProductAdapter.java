@@ -1,5 +1,6 @@
-package co.com.nequi.dynamodb;
+package co.com.nequi.dynamodb.adapter;
 
+import co.com.nequi.dynamodb.entity.ProductEntity;
 import co.com.nequi.dynamodb.helper.TemplateAdapterOperations;
 import co.com.nequi.model.product.Product;
 import co.com.nequi.model.product.gateways.ProductRepository;
@@ -39,17 +40,17 @@ import java.util.concurrent.CompletionException;
 public class DynamoProductAdapter extends TemplateAdapterOperations<Product, String, ProductEntity>
         implements ProductRepository {
 
-    private final DynamoDbAsyncClient ddb;
+    private final DynamoDbAsyncClient dynamoDbAsyncClient;
     private final DynamoDbAsyncTable<ProductEntity> productTable;
     private final String tableName;
 
     public DynamoProductAdapter(DynamoDbEnhancedAsyncClient enhanced,
-                                DynamoDbAsyncClient ddb,
+                                DynamoDbAsyncClient dynamoDbAsyncClient,
                                 ObjectMapper mapper,
                                 @Value("${app.dynamo.product-table}") String tableName) {
         super(enhanced, mapper, pe -> mapper.map(pe, Product.class), tableName,
                 "byBranch");
-        this.ddb = ddb;
+        this.dynamoDbAsyncClient = dynamoDbAsyncClient;
         this.tableName = tableName;
         this.productTable = enhanced.table(tableName, TableSchema.fromBean(ProductEntity.class));
     }
@@ -165,7 +166,7 @@ public class DynamoProductAdapter extends TemplateAdapterOperations<Product, Str
                     .transactItems(TransactWriteItem.builder().update(update).build())
                     .build();
 
-            return Mono.fromFuture(ddb.transactWriteItems(tx))
+            return Mono.fromFuture(dynamoDbAsyncClient.transactWriteItems(tx))
                     .then(Mono.fromFuture(productTable.getItem(r -> r.key(Key.builder().partitionValue(productId).build()))))
                     .switchIfEmpty(Mono.error(new ResourceNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND)))
                     .map(pe -> mapper.map(pe, Product.class))
