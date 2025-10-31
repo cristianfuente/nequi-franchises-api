@@ -35,10 +35,10 @@ public class FranchiseUseCase {
 
     public Mono<Franchise> updateName(String franchiseId, String newName) {
         return getById(franchiseId)
-                        .flatMap(franchise -> franchiseRepository.update(franchise.toBuilder()
-                                .name(newName)
-                                .updatedAt(FunctionUtils.now())
-                                .build()));
+                .flatMap(franchise -> franchiseRepository.update(franchise.toBuilder()
+                        .name(newName)
+                        .updatedAt(FunctionUtils.now())
+                        .build()));
     }
 
     public Mono<Void> delete(String franchiseId) {
