@@ -15,7 +15,8 @@ public enum ExceptionMessage {
     PRODUCT_NAME_REQUIRED("Product name is required"),
     PRODUCT_STOCK_INVALID("Stock must be greater than or equal to 0"),
     PRODUCT_NOT_FOUND("Product not found"),
-    NO_PRODUCTS_IN_BRANCH("No products found in branch");
+    NO_PRODUCTS_IN_BRANCH("No products found in branch"),
+    IDEMPOTENCY_KEY_REQUIRED("idempotency key is required");
 
     private final String message;
 

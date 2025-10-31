@@ -16,10 +16,16 @@ public interface ProductRepository {
 
     Flux<Product> findByFranchiseId(String franchiseId);
 
-    Flux<Product> findAll();
+    Flux<Product> findAll(); // si se expone públicamente, preferir paginación
+
+    Mono<Product> changeStockAtomic(String productId, int delta, String idempotencyKey);
 
     Mono<Product> update(Product product);
 
     Mono<Void> deleteById(String id);
+
+    Mono<Void> deleteByBranchAndId(String branchId, String productId);
+
+    Mono<Product> findTopByBranchId(String branchId);
 
 }

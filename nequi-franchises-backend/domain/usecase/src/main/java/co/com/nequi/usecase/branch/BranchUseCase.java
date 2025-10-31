@@ -2,16 +2,16 @@ package co.com.nequi.usecase.branch;
 
 import co.com.nequi.model.branch.Branch;
 import co.com.nequi.model.branch.gateways.BranchRepository;
-import co.com.nequi.model.franchise.Franchise;
 import co.com.nequi.model.franchise.gateways.FranchiseRepository;
-import co.com.nequi.usecase.constant.ExceptionMessage;
-import co.com.nequi.usecase.exception.ResourceNotFoundException;
 import co.com.nequi.usecase.util.FunctionUtils;
+import co.com.nequi.usecase.util.ReactorChecks;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
+import static co.com.nequi.usecase.constant.ExceptionMessage.BRANCH_NAME_REQUIRED;
+import static co.com.nequi.usecase.constant.ExceptionMessage.BRANCH_NOT_FOUND;
+import static co.com.nequi.usecase.constant.ExceptionMessage.FRANCHISE_NOT_FOUND;
 
 @RequiredArgsConstructor
 public class BranchUseCase {
@@ -19,24 +19,24 @@ public class BranchUseCase {
     private final BranchRepository branchRepository;
     private final FranchiseRepository franchiseRepository;
 
-    public Mono<Branch> createBranch(String franchiseId, Branch branch) {
-        FunctionUtils.validateNotEmptyValue(branch.getName(),
-                ExceptionMessage.BRANCH_NAME_REQUIRED);
+    public Mono<Branch> createBranch(String franchiseId, Branch draft) {
+        FunctionUtils.validateNotEmptyValue(draft.getName(), BRANCH_NAME_REQUIRED);
 
-        return validateFranchiseExists(franchiseId)
-                .map(franchise -> branch.toBuilder()
-                        .id(UUID.randomUUID().toString())
-                        .franchiseId(franchiseId)
-                        .createdAt(System.currentTimeMillis())
-                        .updatedAt(System.currentTimeMillis())
-                        .build())
-                .flatMap(branchRepository::save);
+        return ReactorChecks.notFoundIfEmpty(franchiseRepository.findById(franchiseId), FRANCHISE_NOT_FOUND)
+                .flatMap(f -> Mono.defer(() -> {
+                    long now = FunctionUtils.now();
+                    var branch = draft.toBuilder()
+                            .id(FunctionUtils.newId())
+                            .franchiseId(franchiseId)
+                            .createdAt(now)
+                            .updatedAt(now)
+                            .build();
+                    return branchRepository.save(branch);
+                }));
     }
 
     public Mono<Branch> getById(String branchId) {
-        return branchRepository.findById(branchId)
-                .switchIfEmpty(Mono.error(
-                        new ResourceNotFoundException(ExceptionMessage.BRANCH_NOT_FOUND)));
+        return ReactorChecks.notFoundIfEmpty(branchRepository.findById(branchId), BRANCH_NOT_FOUND);
     }
 
     public Flux<Branch> getByFranchiseId(String franchiseId) {
@@ -48,26 +48,20 @@ public class BranchUseCase {
     }
 
     public Mono<Branch> updateName(String branchId, String newName) {
-        FunctionUtils.validateNotEmptyValue(newName,
-                ExceptionMessage.BRANCH_NAME_REQUIRED);
+        FunctionUtils.validateNotEmptyValue(newName, BRANCH_NAME_REQUIRED);
 
         return getById(branchId)
-                .map(branch -> branch.toBuilder()
-                        .name(newName)
-                        .updatedAt(System.currentTimeMillis())
-                        .build())
-                .flatMap(branchRepository::update);
+                .flatMap(b -> {
+                    var updated = b.toBuilder()
+                            .name(newName)
+                            .updatedAt(FunctionUtils.now())
+                            .build();
+                    return branchRepository.update(updated);
+                });
     }
 
     public Mono<Void> delete(String branchId) {
-        return getById(branchId)
-                .flatMap(branch -> branchRepository.deleteById(branchId));
-    }
-
-    private Mono<Franchise> validateFranchiseExists(String franchiseId) {
-        return franchiseRepository.findById(franchiseId)
-                .switchIfEmpty(Mono.error(
-                        new ResourceNotFoundException(ExceptionMessage.FRANCHISE_NOT_FOUND)));
+        return getById(branchId).then(branchRepository.deleteById(branchId));
     }
 
 }
