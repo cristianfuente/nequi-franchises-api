@@ -18,16 +18,14 @@ import static co.com.nequi.usecase.constant.ExceptionMessage.PRODUCT_NOT_FOUND;
 import static co.com.nequi.usecase.constant.ExceptionMessage.PRODUCT_STOCK_INVALID;
 
 @RequiredArgsConstructor
-
 public class ProductUseCase {
-
 
     private final ProductRepository productRepository;
     private final BranchRepository branchRepository;
 
     public Mono<Product> createProduct(String branchId, Product draft) {
-        return validateProductData(draft.getName(), draft.getStock()).then(
-                ReactorChecks.notFoundIfEmpty(branchRepository.findById(branchId), BRANCH_NOT_FOUND)
+        return validateProductData(draft.getName(), draft.getStock()).
+                then(ReactorChecks.notFoundIfEmpty(branchRepository.findById(branchId), BRANCH_NOT_FOUND)
                         .map(branch -> draft.toBuilder()
                                 .id(FunctionUtils.newId())
                                 .franchiseId(branch.getFranchiseId())
@@ -71,13 +69,12 @@ public class ProductUseCase {
 
     public Mono<Product> changeStock(String productId, int delta, String idempotencyKey) {
         return ReactorChecks.validateNotEmptyValue(idempotencyKey, IDEMPOTENCY_KEY_REQUIRED)
-                .flatMap(v -> {
-                    if (delta == 0) {
-                        return getById(productId);
-                    }
-                    return getById(productId)
-                            .flatMap(p -> productRepository.changeStockAtomic(p.getId(), delta, idempotencyKey));
-                });
+                .then(
+                        (delta == 0)
+                                ? getById(productId)
+                                : getById(productId)
+                                .flatMap(p -> productRepository.changeStockAtomic(p.getId(), delta, idempotencyKey))
+                );
     }
 
     public Mono<Void> deleteByBranch(String branchId, String productId) {
@@ -92,12 +89,12 @@ public class ProductUseCase {
 
     private Mono<Void> validateProductData(String name, Integer stock) {
         return ReactorChecks.validateNotEmptyValue(name, PRODUCT_NAME_REQUIRED)
-                .flatMap(v -> {
+                .then(Mono.defer(() -> {
                     if (stock == null || stock < 0) {
                         return Mono.error(new ValidationException(PRODUCT_STOCK_INVALID));
                     }
                     return Mono.empty();
-                });
+                }));
     }
 
 }
