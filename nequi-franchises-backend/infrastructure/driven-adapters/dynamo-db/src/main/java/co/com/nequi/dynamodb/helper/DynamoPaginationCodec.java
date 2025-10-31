@@ -55,7 +55,8 @@ public final class DynamoPaginationCodec {
         try {
             byte[] decoded = Base64.getUrlDecoder().decode(cursor);
             String json = new String(decoded, StandardCharsets.UTF_8);
-            Map<String, Map<String, String>> data = OBJECT_MAPPER.readValue(json, new TypeReference<>() {});
+            Map<String, Map<String, String>> data = OBJECT_MAPPER.readValue(json, new TypeReference<>() {
+            });
             Map<String, AttributeValue> result = new HashMap<>();
             data.forEach((attr, valueMap) -> {
                 AttributeValue.Builder builder = AttributeValue.builder();

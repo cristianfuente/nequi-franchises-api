@@ -250,8 +250,8 @@ public class DynamoProductAdapter implements ProductRepository {
 
             return Mono.fromFuture(dynamoDbAsyncClient.transactWriteItems(tx))
                     .then(Mono.fromFuture(productTable.getItem(r -> r.key(Key.builder()
-                                    .partitionValue(productId)
-                                    .build()))))
+                            .partitionValue(productId)
+                            .build()))))
                     .switchIfEmpty(Mono.error(new ResourceNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND)))
                     .flatMap(entity -> {
                         if (!ENTITY_TYPE.equals(entity.getEntityType())) {

@@ -7,7 +7,6 @@ import co.com.nequi.model.branch.gateways.BranchRepository;
 import co.com.nequi.model.pagination.PageResult;
 import co.com.nequi.usecase.constant.ExceptionMessage;
 import co.com.nequi.usecase.exception.ResourceNotFoundException;
-
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;

@@ -16,12 +16,18 @@ public class FranchiseEntity {
     private Long updatedAt;
     private Long version;
 
-    public FranchiseEntity(){}
+    public FranchiseEntity() {
+    }
 
     @DynamoDbPartitionKey
     @DynamoDbAttribute("id")
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     @DynamoDbAttribute("entityType")
     public String getEntityType() {
@@ -43,19 +49,39 @@ public class FranchiseEntity {
     }
 
     @DynamoDbAttribute("name")
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @DynamoDbAttribute("createdAt")
-    public Long getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Long createdAt) { this.createdAt = createdAt; }
+    public Long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Long createdAt) {
+        this.createdAt = createdAt;
+    }
 
     @DynamoDbAttribute("updatedAt")
-    public Long getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(Long updatedAt) { this.updatedAt = updatedAt; }
+    public Long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     @DynamoDbAttribute("version")
-    public Long getVersion() { return version; }
-    public void setVersion(Long version) { this.version = version; }
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 
 }

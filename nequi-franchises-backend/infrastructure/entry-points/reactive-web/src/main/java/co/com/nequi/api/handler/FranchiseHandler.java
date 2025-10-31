@@ -1,12 +1,13 @@
 package co.com.nequi.api.handler;
 
 import co.com.nequi.api.dto.ErrorDto;
-import co.com.nequi.api.mapper.DtoMappers;
 import co.com.nequi.api.dto.FranchiseCreateRequestDto;
-import co.com.nequi.api.dto.FranchiseResponseDto;
 import co.com.nequi.api.dto.FranchisePageResponseDto;
+import co.com.nequi.api.dto.FranchiseResponseDto;
 import co.com.nequi.api.dto.PagedResponseDto;
 import co.com.nequi.api.dto.RenameRequestDto;
+import co.com.nequi.api.mapper.DtoMappers;
+import co.com.nequi.usecase.exception.ValidationException;
 import co.com.nequi.usecase.franchise.FranchiseUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
-import co.com.nequi.usecase.exception.ValidationException;
 
 import static co.com.nequi.usecase.constant.ExceptionMessage.INVALID_PAGINATION_CURSOR;
 import static co.com.nequi.usecase.constant.ExceptionMessage.INVALID_PAGINATION_LIMIT;
@@ -107,7 +107,7 @@ public class FranchiseHandler {
                             content = @Content(schema = @Schema(implementation = ErrorDto.class)))
             }
     )
-   public Mono<ServerResponse> updateName(ServerRequest req) {
+    public Mono<ServerResponse> updateName(ServerRequest req) {
         String fid = req.pathVariable("fid");
         log.info("[Franchises] updateName fid={}", fid);
         return req.bodyToMono(RenameRequestDto.class)
