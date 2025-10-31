@@ -11,6 +11,9 @@ spring:
       path: "/h2"
   profiles:
     include: null
+springdoc:
+  swagger-ui:
+    path: /swagger
 management:
   endpoints:
     web:
@@ -22,3 +25,11 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+aws:
+  region: us-east-1
+  dynamodb:
+    endpoint: "http://localhost:4566"
+
+app:
+  dynamo:
+    core-table: core_table

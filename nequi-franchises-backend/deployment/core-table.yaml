@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: DynamoDB core_table with single-table design optimized for franchises and products
+
+Resources:
+  CoreTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: core_table
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: franchiseId
+          AttributeType: S
+        - AttributeName: branchId
+          AttributeType: S
+        - AttributeName: topSort
+          AttributeType: S
+        - AttributeName: nameByBranchSortKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: byFranchise
+          KeySchema:
+            - AttributeName: franchiseId
+              KeyType: HASH
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - id
+              - entityType
+              - name
+              - branchId
+              - status
+              - stock
+              - createdAt
+              - updatedAt
+              - version
+        - IndexName: byBranch
+          KeySchema:
+            - AttributeName: branchId
+              KeyType: HASH
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - id
+              - entityType
+              - franchiseId
+              - name
+              - nameLc
+              - stock
+              - topSort
+              - createdAt
+              - updatedAt
+              - version
+        - IndexName: topByBranch
+          KeySchema:
+            - AttributeName: branchId
+              KeyType: HASH
+            - AttributeName: topSort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - id
+              - entityType
+              - franchiseId
+              - name
+              - nameLc
+              - stock
+              - createdAt
+              - updatedAt
+              - version
+        - IndexName: nameByBranch
+          KeySchema:
+            - AttributeName: branchId
+              KeyType: HASH
+            - AttributeName: nameByBranchSortKey
+              KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - id
+              - entityType
+              - franchiseId
+              - name
+              - stock
+              - createdAt
+              - updatedAt
+              - version
