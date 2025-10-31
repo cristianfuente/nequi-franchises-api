@@ -17,7 +17,6 @@ public class RouterRest {
                                                          BranchHandler branchHandler,
                                                          ProductHandler productHandler) {
         return route().path("/v1", builder -> builder
-
                 .POST("/franchises", franchiseHandler::create)
                 .GET("/franchises/{fid}", franchiseHandler::getById)
                 .GET("/franchises", franchiseHandler::getAll)

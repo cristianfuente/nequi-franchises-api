@@ -1,4 +1,4 @@
-package co.com.nequi.api;
+package co.com.nequi.api.mapper;
 
 import co.com.nequi.api.dto.BranchResponseDto;
 import co.com.nequi.api.dto.FranchiseResponseDto;

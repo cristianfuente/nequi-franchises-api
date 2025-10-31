@@ -1,6 +1,6 @@
 package co.com.nequi.api.handler;
 
-import co.com.nequi.api.DtoMappers;
+import co.com.nequi.api.mapper.DtoMappers;
 import co.com.nequi.api.dto.BranchCreateRequestDto;
 import co.com.nequi.api.dto.BranchResponseDto;
 import co.com.nequi.api.dto.RenameRequestDto;

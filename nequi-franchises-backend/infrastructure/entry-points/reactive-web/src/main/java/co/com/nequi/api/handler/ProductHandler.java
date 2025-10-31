@@ -1,6 +1,6 @@
 package co.com.nequi.api.handler;
 
-import co.com.nequi.api.DtoMappers;
+import co.com.nequi.api.mapper.DtoMappers;
 import co.com.nequi.api.dto.ChangeStockRequestDto;
 import co.com.nequi.api.dto.ProductCreateRequestDto;
 import co.com.nequi.api.dto.ProductResponseDto;
@@ -16,7 +16,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static co.com.nequi.api.DtoMappers.toSummary;
+import static co.com.nequi.api.mapper.DtoMappers.toSummary;
 
 @Component
 @RequiredArgsConstructor
