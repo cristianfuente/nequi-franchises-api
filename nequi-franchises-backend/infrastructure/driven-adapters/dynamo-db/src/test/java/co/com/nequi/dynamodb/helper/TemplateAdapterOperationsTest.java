@@ -12,8 +12,8 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,7 +54,8 @@ class TemplateAdapterOperationsTest {
 
     @Test
     void testSave() {
-        when(customerTable.putItem(productEntity)).thenReturn(CompletableFuture.runAsync(()->{}));
+        when(customerTable.putItem(productEntity)).thenReturn(CompletableFuture.runAsync(() -> {
+        }));
         when(mapper.map(productEntity, ProductEntity.class)).thenReturn(productEntity);
 
         DynamoProductAdapter dynamoProductAdapter =

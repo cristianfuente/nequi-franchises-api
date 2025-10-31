@@ -10,7 +10,8 @@ import co.com.nequi.model.product.Product;
 
 public class DtoMappers {
 
-    private DtoMappers(){}
+    private DtoMappers() {
+    }
 
     public static FranchiseResponseDto toRes(Franchise f) {
         return FranchiseResponseDto.builder()

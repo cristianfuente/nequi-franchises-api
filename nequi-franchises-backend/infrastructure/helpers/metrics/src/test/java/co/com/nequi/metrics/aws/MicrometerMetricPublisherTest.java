@@ -12,8 +12,8 @@ class MicrometerMetricPublisherTest {
     @Test
     void metricTest() {
         LoggingMeterRegistry loggingMeterRegistry = LoggingMeterRegistry
-            .builder(LoggingRegistryConfig.DEFAULT)
-            .build();
+                .builder(LoggingRegistryConfig.DEFAULT)
+                .build();
 
         MicrometerMetricPublisher micrometerMetricPublisher = new MicrometerMetricPublisher(loggingMeterRegistry);
 
