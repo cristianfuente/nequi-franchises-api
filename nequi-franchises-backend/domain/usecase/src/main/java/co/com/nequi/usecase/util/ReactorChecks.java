@@ -12,12 +12,11 @@ public final class ReactorChecks {
 
     public static Mono<Void> validateNotEmptyValue(String value,
                                                    ExceptionMessage exceptionMessage) {
-        return Mono.defer(() -> {
-            if (value == null || value.trim().isEmpty()) {
-                return Mono.error(new ValidationException(exceptionMessage));
-            }
-            return Mono.empty();
-        });
+        return Mono.defer(() ->
+                (value == null || value.trim().isEmpty())
+                        ? Mono.error(new ValidationException(exceptionMessage))
+                        : Mono.empty()
+        );
     }
 
     public static <T> Mono<T> notFoundIfEmpty(Mono<T> mono, ExceptionMessage message) {
