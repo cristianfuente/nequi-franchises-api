@@ -2,6 +2,7 @@ package co.com.nequi.usecase.franchise;
 
 import co.com.nequi.model.franchise.Franchise;
 import co.com.nequi.model.franchise.gateways.FranchiseRepository;
+import co.com.nequi.model.pagination.PageResult;
 import co.com.nequi.usecase.util.FunctionUtils;
 import co.com.nequi.usecase.util.ReactorChecks;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,12 @@ public class FranchiseUseCase {
         return ReactorChecks.notFoundIfEmpty(franchiseRepository.findById(franchiseId), FRANCHISE_NOT_FOUND);
     }
 
-    public Flux<Franchise> getAll() {
-        return franchiseRepository.findAll();
+    public Mono<PageResult<Franchise>> getAll(Integer limit, String cursor) {
+        return franchiseRepository.findAll(resolveLimit(limit), cursor);
+    }
+
+    public Flux<Franchise> streamAll() {
+        return franchiseRepository.streamAll();
     }
 
     public Mono<Franchise> updateName(String franchiseId, String newName) {
@@ -46,4 +51,10 @@ public class FranchiseUseCase {
                 .then(franchiseRepository.deleteById(franchiseId));
     }
 
+    private int resolveLimit(Integer requested) {
+        if (requested == null || requested <= 0) {
+            return 20;
+        }
+        return Math.min(requested, 100);
+    }
 }

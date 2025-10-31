@@ -3,6 +3,7 @@ package co.com.nequi.usecase.branch;
 import co.com.nequi.model.branch.Branch;
 import co.com.nequi.model.branch.gateways.BranchRepository;
 import co.com.nequi.model.franchise.gateways.FranchiseRepository;
+import co.com.nequi.model.pagination.PageResult;
 import co.com.nequi.usecase.util.FunctionUtils;
 import co.com.nequi.usecase.util.ReactorChecks;
 import lombok.RequiredArgsConstructor;
@@ -35,12 +36,12 @@ public class BranchUseCase {
         return ReactorChecks.notFoundIfEmpty(branchRepository.findById(branchId), BRANCH_NOT_FOUND);
     }
 
-    public Flux<Branch> getByFranchiseId(String franchiseId) {
-        return branchRepository.findByFranchiseId(franchiseId);
+    public Mono<PageResult<Branch>> getByFranchiseId(String franchiseId, Integer limit, String cursor) {
+        return branchRepository.findByFranchiseId(franchiseId, resolveLimit(limit), cursor);
     }
 
-    public Flux<Branch> getAll() {
-        return branchRepository.findAll();
+    public Flux<Branch> streamByFranchiseId(String franchiseId) {
+        return branchRepository.streamByFranchiseId(franchiseId);
     }
 
     public Mono<Branch> updateName(String branchId, String newName) {
@@ -57,4 +58,10 @@ public class BranchUseCase {
         return getById(branchId).then(branchRepository.deleteById(branchId));
     }
 
+    private int resolveLimit(Integer requested) {
+        if (requested == null || requested <= 0) {
+            return 20;
+        }
+        return Math.min(requested, 100);
+    }
 }

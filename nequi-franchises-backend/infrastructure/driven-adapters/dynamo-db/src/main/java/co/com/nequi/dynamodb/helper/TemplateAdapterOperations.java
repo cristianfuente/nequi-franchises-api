@@ -39,30 +39,33 @@ public abstract class TemplateAdapterOperations<E, K, V> {
     }
 
     public Mono<E> save(E model) {
-        return Mono.fromFuture(table.putItem(toEntity(model))).thenReturn(model);
+        return Mono.defer(() -> Mono.fromFuture(table.putItem(toEntity(model))).thenReturn(model));
     }
 
     public Mono<E> getById(K id) {
-        return Mono.fromFuture(table.getItem(Key.builder()
+        return Mono.defer(() -> Mono.fromFuture(table.getItem(Key.builder()
                         .partitionValue(AttributeValue.builder().s((String) id).build())
                         .build()))
-                .map(this::toModel);
+                .map(this::toModel));
     }
 
     public Mono<E> delete(E model) {
-        return Mono.fromFuture(table.deleteItem(toEntity(model))).map(this::toModel);
+        return Mono.defer(() -> Mono.fromFuture(table.deleteItem(toEntity(model))).map(this::toModel));
     }
 
     public Mono<List<E>> query(QueryEnhancedRequest queryExpression) {
-        PagePublisher<V> pagePublisher = table.query(queryExpression);
-        return listOfModel(pagePublisher);
+        return Mono.defer(() -> {
+            PagePublisher<V> pagePublisher = table.query(queryExpression);
+            return listOfModel(pagePublisher);
+        });
     }
 
     public Mono<List<E>> queryByIndex(QueryEnhancedRequest queryExpression, String... index) {
-        DynamoDbAsyncIndex<V> queryIndex = index.length > 0 ? table.index(index[0]) : tableByIndex;
-
-        SdkPublisher<Page<V>> pagePublisher = queryIndex.query(queryExpression);
-        return listOfModel(pagePublisher);
+        return Mono.defer(() -> {
+            DynamoDbAsyncIndex<V> queryIndex = index.length > 0 ? table.index(index[0]) : tableByIndex;
+            SdkPublisher<Page<V>> pagePublisher = queryIndex.query(queryExpression);
+            return listOfModel(pagePublisher);
+        });
     }
 
     /**
@@ -74,8 +77,10 @@ public abstract class TemplateAdapterOperations<E, K, V> {
      */
     @Deprecated(forRemoval = true)
     public Mono<List<E>> scan() {
-        PagePublisher<V> pagePublisher = table.scan();
-        return listOfModel(pagePublisher);
+        return Mono.defer(() -> {
+            PagePublisher<V> pagePublisher = table.scan();
+            return listOfModel(pagePublisher);
+        });
     }
 
     private Mono<List<E>> listOfModel(PagePublisher<V> pagePublisher) {

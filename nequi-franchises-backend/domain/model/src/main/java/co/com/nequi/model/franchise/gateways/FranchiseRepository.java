@@ -1,6 +1,7 @@
 package co.com.nequi.model.franchise.gateways;
 
 import co.com.nequi.model.franchise.Franchise;
+import co.com.nequi.model.pagination.PageResult;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -10,7 +11,9 @@ public interface FranchiseRepository {
 
     Mono<Franchise> findById(String id);
 
-    Flux<Franchise> findAll();
+    Mono<PageResult<Franchise>> findAll(int limit, String exclusiveStartKey);
+
+    Flux<Franchise> streamAll();
 
     Mono<Franchise> update(Franchise franchise);
 

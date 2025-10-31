@@ -9,11 +9,13 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecon
 public class BranchEntity {
 
     private String id;
+    private String entityType;
     private String franchiseId;
     private String name;
     private Long createdAt;
     private Long updatedAt;
     private String status;
+    private Long version;
 
     public BranchEntity(){}
 
@@ -21,6 +23,15 @@ public class BranchEntity {
     @DynamoDbAttribute("id")
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+
+    @DynamoDbAttribute("entityType")
+    public String getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
+    }
 
     @DynamoDbSecondaryPartitionKey(indexNames = "byFranchise")
     @DynamoDbAttribute("franchiseId")
@@ -43,4 +54,12 @@ public class BranchEntity {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
+    @DynamoDbAttribute("version")
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 }

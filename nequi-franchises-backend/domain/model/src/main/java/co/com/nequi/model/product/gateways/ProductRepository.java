@@ -1,5 +1,6 @@
 package co.com.nequi.model.product.gateways;
 
+import co.com.nequi.model.pagination.PageResult;
 import co.com.nequi.model.product.Product;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,11 +13,13 @@ public interface ProductRepository {
 
     Mono<Product> findByIdAndBranchId(String id, String branchId);
 
-    Flux<Product> findByBranchId(String branchId);
+    Mono<PageResult<Product>> findByBranchId(String branchId, int limit, String exclusiveStartKey);
 
-    Flux<Product> findByFranchiseId(String franchiseId);
+    Mono<PageResult<Product>> findByFranchiseId(String franchiseId, int limit, String exclusiveStartKey);
 
-    Flux<Product> findAll(); // si se expone públicamente, preferir paginación
+    Mono<PageResult<Product>> searchByName(String branchId, String prefix, int limit, String exclusiveStartKey);
+
+    Flux<Product> streamByBranch(String branchId);
 
     Mono<Product> changeStockAtomic(String productId, int delta, String idempotencyKey);
 

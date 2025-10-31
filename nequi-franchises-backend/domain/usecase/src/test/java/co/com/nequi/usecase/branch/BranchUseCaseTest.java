@@ -4,17 +4,20 @@ import co.com.nequi.model.branch.Branch;
 import co.com.nequi.model.branch.gateways.BranchRepository;
 import co.com.nequi.model.franchise.Franchise;
 import co.com.nequi.model.franchise.gateways.FranchiseRepository;
+import co.com.nequi.model.pagination.PageResult;
 import co.com.nequi.usecase.exception.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -68,13 +71,18 @@ class BranchUseCaseTest {
 
     @Test
     void getByFranchiseId_ok() {
-        when(branchRepository.findByFranchiseId("F1")).thenReturn(Flux.just(
+        PageResult<Branch> page = PageResult.of(List.of(
                 Branch.builder().id("B1").franchiseId("F1").name("A").build(),
                 Branch.builder().id("B2").franchiseId("F1").name("B").build()
-        ));
+        ), "cursor-1");
 
-        StepVerifier.create(useCase.getByFranchiseId("F1"))
-                .expectNextCount(2)
+        when(branchRepository.findByFranchiseId(eq("F1"), eq(20), eq(null))).thenReturn(Mono.just(page));
+
+        StepVerifier.create(useCase.getByFranchiseId("F1", null, null))
+                .assertNext(result -> {
+                    assert result.getItems().size() == 2;
+                    assert "cursor-1".equals(result.getLastEvaluatedKey());
+                })
                 .verifyComplete();
     }
 

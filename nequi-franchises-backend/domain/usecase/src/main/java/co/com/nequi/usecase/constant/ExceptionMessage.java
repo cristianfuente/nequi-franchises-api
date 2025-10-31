@@ -16,7 +16,9 @@ public enum ExceptionMessage {
     PRODUCT_STOCK_INVALID("Stock must be greater than or equal to 0"),
     PRODUCT_NOT_FOUND("Product not found"),
     NO_PRODUCTS_IN_BRANCH("No products found in branch"),
-    IDEMPOTENCY_KEY_REQUIRED("idempotency key is required");
+    IDEMPOTENCY_KEY_REQUIRED("idempotency key is required"),
+    INVALID_PAGINATION_LIMIT("Pagination limit must be between 1 and 100"),
+    INVALID_PAGINATION_CURSOR("Invalid pagination cursor");
 
     private final String message;
 

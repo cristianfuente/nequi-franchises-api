@@ -2,6 +2,7 @@ package co.com.nequi.usecase.franchise;
 
 import co.com.nequi.model.franchise.Franchise;
 import co.com.nequi.model.franchise.gateways.FranchiseRepository;
+import co.com.nequi.model.pagination.PageResult;
 import co.com.nequi.usecase.exception.ResourceNotFoundException;
 import co.com.nequi.usecase.exception.ValidationException;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -85,6 +89,23 @@ class FranchiseUseCaseTest {
 
         verify(franchiseRepository).findById("F1");
         verify(franchiseRepository).deleteById("F1");
+    }
+
+    @Test
+    void getAll_ok() {
+        PageResult<Franchise> page = PageResult.of(List.of(
+                Franchise.builder().id("F1").name("A").build(),
+                Franchise.builder().id("F2").name("B").build()
+        ), "cursor-2");
+
+        when(franchiseRepository.findAll(eq(20), eq(null))).thenReturn(Mono.just(page));
+
+        StepVerifier.create(useCase.getAll(null, null))
+                .assertNext(result -> {
+                    Assertions.assertEquals(2, result.getItems().size());
+                    Assertions.assertEquals("cursor-2", result.getLastEvaluatedKey());
+                })
+                .verifyComplete();
     }
 
 }

@@ -2,6 +2,7 @@ package co.com.nequi.usecase.product;
 
 import co.com.nequi.model.branch.Branch;
 import co.com.nequi.model.branch.gateways.BranchRepository;
+import co.com.nequi.model.pagination.PageResult;
 import co.com.nequi.model.product.Product;
 import co.com.nequi.model.product.gateways.ProductRepository;
 import co.com.nequi.usecase.exception.ResourceNotFoundException;
@@ -17,9 +18,12 @@ import org.mockito.quality.Strictness;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -127,6 +131,33 @@ class ProductUseCaseTest {
         StepVerifier.create(useCase.changeStock("P1", 1, " "))
                 .expectError(ValidationException.class)
                 .verify();
+    }
+
+    @Test
+    void getByBranch_paginated_ok() {
+        PageResult<Product> page = PageResult.of(List.of(
+                Product.builder().id("P1").branchId("B1").name("Leche").build(),
+                Product.builder().id("P2").branchId("B1").name("Pan").build()
+        ), "cursor-branch");
+
+        when(productRepository.findByBranchId(eq("B1"), eq(20), eq(null))).thenReturn(Mono.just(page));
+
+        StepVerifier.create(useCase.getByBranchId("B1", null, null))
+                .assertNext(result -> Assertions.assertEquals("cursor-branch", result.getLastEvaluatedKey()))
+                .verifyComplete();
+    }
+
+    @Test
+    void searchByName_ok() {
+        PageResult<Product> page = PageResult.of(List.of(
+                Product.builder().id("P1").branchId("B1").name("Leche").build()
+        ), null);
+
+        when(productRepository.searchByName(eq("B1"), eq("le"), eq(20), eq(null))).thenReturn(Mono.just(page));
+
+        StepVerifier.create(useCase.searchByName("B1", "le", null, null))
+                .assertNext(result -> Assertions.assertNull(result.getLastEvaluatedKey()))
+                .verifyComplete();
     }
 
     @Test

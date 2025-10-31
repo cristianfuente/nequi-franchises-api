@@ -10,15 +10,17 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecon
 public class ProductEntity {
 
     private String id;
+    private String entityType;
     private String franchiseId;
     private String branchId;
     private String name;
     private String nameLc;
+    private String nameByBranchSortKey;
     private Integer stock;
+    private String topSort;
     private Long version;
     private Long createdAt;
     private Long updatedAt;
-
 
     public ProductEntity() {
     }
@@ -33,6 +35,15 @@ public class ProductEntity {
         this.id = id;
     }
 
+    @DynamoDbAttribute("entityType")
+    public String getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
+    }
+
     @DynamoDbSecondaryPartitionKey(indexNames = {"byFranchise"})
     @DynamoDbAttribute("franchiseId")
     public String getFranchiseId() {
@@ -43,7 +54,7 @@ public class ProductEntity {
         this.franchiseId = franchiseId;
     }
 
-    @DynamoDbSecondaryPartitionKey(indexNames = {"byBranch", "topByBranch"})
+    @DynamoDbSecondaryPartitionKey(indexNames = {"byBranch", "topByBranch", "nameByBranch"})
     @DynamoDbAttribute("branchId")
     public String getBranchId() {
         return branchId;
@@ -71,6 +82,16 @@ public class ProductEntity {
         this.nameLc = nameLc;
     }
 
+    @DynamoDbSecondarySortKey(indexNames = {"nameByBranch"})
+    @DynamoDbAttribute("nameByBranchSortKey")
+    public String getNameByBranchSortKey() {
+        return nameByBranchSortKey;
+    }
+
+    public void setNameByBranchSortKey(String nameByBranchSortKey) {
+        this.nameByBranchSortKey = nameByBranchSortKey;
+    }
+
     @DynamoDbAttribute("stock")
     public Integer getStock() {
         return stock;
@@ -78,6 +99,16 @@ public class ProductEntity {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    @DynamoDbSecondarySortKey(indexNames = {"topByBranch"})
+    @DynamoDbAttribute("topSort")
+    public String getTopSort() {
+        return topSort;
+    }
+
+    public void setTopSort(String topSort) {
+        this.topSort = topSort;
     }
 
     @DynamoDbAttribute("version")
@@ -106,12 +137,4 @@ public class ProductEntity {
     public void setUpdatedAt(Long updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    @DynamoDbSecondarySortKey(indexNames = "topByBranch")
-    public String getTopSort() {
-        long stockVal = stock == null ? 0L : Math.max(0, stock.longValue());
-        long complement = 999_999_999_999L - stockVal;
-        return "RANK#" + String.format("%012d", complement) + "#PROD#" + id;
-    }
-
 }

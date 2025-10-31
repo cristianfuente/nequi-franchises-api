@@ -1,6 +1,7 @@
 package co.com.nequi.model.branch.gateways;
 
 import co.com.nequi.model.branch.Branch;
+import co.com.nequi.model.pagination.PageResult;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -12,9 +13,9 @@ public interface BranchRepository {
 
     Mono<Branch> findByIdAndFranchiseId(String id, String franchiseId);
 
-    Flux<Branch> findByFranchiseId(String franchiseId);
+    Mono<PageResult<Branch>> findByFranchiseId(String franchiseId, int limit, String exclusiveStartKey);
 
-    Flux<Branch> findAll();
+    Flux<Branch> streamByFranchiseId(String franchiseId);
 
     Mono<Branch> update(Branch branch);
 

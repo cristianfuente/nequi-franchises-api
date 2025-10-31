@@ -1,6 +1,7 @@
 package co.com.nequi.usecase.product;
 
 import co.com.nequi.model.branch.gateways.BranchRepository;
+import co.com.nequi.model.pagination.PageResult;
 import co.com.nequi.model.product.Product;
 import co.com.nequi.model.product.gateways.ProductRepository;
 import co.com.nequi.usecase.exception.ValidationException;
@@ -40,16 +41,21 @@ public class ProductUseCase {
         return ReactorChecks.notFoundIfEmpty(productRepository.findById(productId), PRODUCT_NOT_FOUND);
     }
 
-    public Flux<Product> getByBranchId(String branchId) {
-        return productRepository.findByBranchId(branchId);
+    public Mono<PageResult<Product>> getByBranchId(String branchId, Integer limit, String cursor) {
+        return productRepository.findByBranchId(branchId, resolveLimit(limit), cursor);
     }
 
-    public Flux<Product> getByFranchiseId(String franchiseId) {
-        return productRepository.findByFranchiseId(franchiseId);
+    public Mono<PageResult<Product>> getByFranchiseId(String franchiseId, Integer limit, String cursor) {
+        return productRepository.findByFranchiseId(franchiseId, resolveLimit(limit), cursor);
     }
 
-    public Flux<Product> getAll() {
-        return productRepository.findAll();
+    public Mono<PageResult<Product>> searchByName(String branchId, String prefix, Integer limit, String cursor) {
+        return ReactorChecks.validateNotEmptyValue(prefix, PRODUCT_NAME_REQUIRED)
+                .then(productRepository.searchByName(branchId, prefix, resolveLimit(limit), cursor));
+    }
+
+    public Flux<Product> streamByBranch(String branchId) {
+        return productRepository.streamByBranch(branchId);
     }
 
     public Mono<Product> updateName(String productId, String newName) {
@@ -97,4 +103,10 @@ public class ProductUseCase {
                 }));
     }
 
+    private int resolveLimit(Integer requested) {
+        if (requested == null || requested <= 0) {
+            return 20;
+        }
+        return Math.min(requested, 100);
+    }
 }
