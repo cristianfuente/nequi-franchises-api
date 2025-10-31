@@ -55,14 +55,13 @@ public class ProductUseCase {
     }
 
     public Mono<Product> updateName(String productId, String newName) {
-        return ReactorChecks.validateNotEmptyValue(newName, PRODUCT_NAME_REQUIRED).then(
-                getById(productId)
-                        .flatMap(p -> productRepository.update(
-                                p.toBuilder()
-                                        .name(newName)
-                                        .updatedAt(FunctionUtils.now())
-                                        .build()
-                        )));
+        return getById(productId)
+                .flatMap(p -> productRepository.update(
+                        p.toBuilder()
+                                .name(newName)
+                                .updatedAt(FunctionUtils.now())
+                                .build()
+                ));
     }
 
     public Mono<Product> getMaxStockByBranch(String branchId) {

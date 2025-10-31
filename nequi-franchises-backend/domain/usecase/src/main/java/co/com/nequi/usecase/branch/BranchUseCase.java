@@ -44,19 +44,17 @@ public class BranchUseCase {
     }
 
     public Mono<Branch> updateName(String branchId, String newName) {
-        return ReactorChecks.validateNotEmptyValue(newName, BRANCH_NAME_REQUIRED)
-                .then(getById(branchId)
-                        .flatMap(branch ->
-                                branchRepository.update(
-                                        branch.toBuilder()
-                                                .name(newName)
-                                                .updatedAt(FunctionUtils.now())
-                                                .build())));
+        return getById(branchId)
+                .flatMap(branch ->
+                        branchRepository.update(
+                                branch.toBuilder()
+                                        .name(newName)
+                                        .updatedAt(FunctionUtils.now())
+                                        .build()));
     }
 
     public Mono<Void> delete(String branchId) {
-        return ReactorChecks.notFoundIfEmpty(getById(branchId), BRANCH_NOT_FOUND)
-                .then(branchRepository.deleteById(branchId));
+        return getById(branchId).then(branchRepository.deleteById(branchId));
     }
 
 }

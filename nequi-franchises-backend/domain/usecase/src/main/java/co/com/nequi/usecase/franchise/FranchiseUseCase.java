@@ -34,16 +34,15 @@ public class FranchiseUseCase {
     }
 
     public Mono<Franchise> updateName(String franchiseId, String newName) {
-        return ReactorChecks.validateNotEmptyValue(newName, FRANCHISE_NAME_REQUIRED)
-                .then(getById(franchiseId)
+        return getById(franchiseId)
                         .flatMap(franchise -> franchiseRepository.update(franchise.toBuilder()
                                 .name(newName)
                                 .updatedAt(FunctionUtils.now())
-                                .build())));
+                                .build()));
     }
 
     public Mono<Void> delete(String franchiseId) {
-        return ReactorChecks.notFoundIfEmpty(getById(franchiseId), FRANCHISE_NOT_FOUND)
+        return getById(franchiseId)
                 .then(franchiseRepository.deleteById(franchiseId));
     }
 
