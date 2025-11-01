@@ -1,5 +1,10 @@
 # Nequi Franchises IAC
 
+# Arquitectura
+
+![Clean Architecture](ar-aws-nequi.drawio.png)
+
+
 Terraform modules that provision a lightweight serverless-style runtime for a Java container.  
 The stack follows the architecture requested by the team:
 
