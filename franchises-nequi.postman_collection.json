@@ -1,0 +1,555 @@
+{
+	"info": {
+		"_postman_id": "e17d372f-206c-4b1e-aee4-8cc3513b6a1d",
+		"name": "franchises-nequi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38149717"
+	},
+	"item": [
+		{
+			"name": "franquicias",
+			"item": [
+				{
+					"name": "obtener todo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env}}/franchises",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "obtener por id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Franquicia SANTANDER\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "actualizar nombre",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Franquicia Santander-a\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/cecabd54-2819-41d5-bcb6-9d2a8068fc6e/name",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"cecabd54-2819-41d5-bcb6-9d2a8068fc6e",
+								"name"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eliminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Franquicia Santander-a\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/cecabd54-2819-41d5-bcb6-9d2a8068fc6e",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"cecabd54-2819-41d5-bcb6-9d2a8068fc6e"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "sucursales",
+			"item": [
+				{
+					"name": "crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sucursal Centro sur\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "obtener por id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sucursal Centro\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/branches/3e489f2a-dc0c-4d58-95b1-2fd340d3956c",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"branches",
+								"3e489f2a-dc0c-4d58-95b1-2fd340d3956c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sucursales por franquicia",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sucursal Centro\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "actualizar nombre",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sucursal Centro oeste\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches/de398b33-24ff-475f-8440-d818be35b01b/name",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches",
+								"de398b33-24ff-475f-8440-d818be35b01b",
+								"name"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "elminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sucursal Centro oeste\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches/de398b33-24ff-475f-8440-d818be35b01b",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches",
+								"de398b33-24ff-475f-8440-d818be35b01b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "productos",
+			"item": [
+				{
+					"name": "crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Leche semi-entera 1L\",\n  \"stock\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches/3e489f2a-dc0c-4d58-95b1-2fd340d3956c/products",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches",
+								"3e489f2a-dc0c-4d58-95b1-2fd340d3956c",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "obtener todo",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Leche Entera 1L\",\n  \"stock\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches/3e489f2a-dc0c-4d58-95b1-2fd340d3956c/products",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches",
+								"3e489f2a-dc0c-4d58-95b1-2fd340d3956c",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "actualizar nombre",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Lechita\",\n  \"stock\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches/3e489f2a-dc0c-4d58-95b1-2fd340d3956c/products/a1ef6de3-4f6e-4bfb-bc9c-236ed8f86a3b/name",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches",
+								"3e489f2a-dc0c-4d58-95b1-2fd340d3956c",
+								"products",
+								"a1ef6de3-4f6e-4bfb-bc9c-236ed8f86a3b",
+								"name"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "actualizar stock",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Idempotency-Key",
+								"value": "fsdfsfew",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"delta\": -5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches/3e489f2a-dc0c-4d58-95b1-2fd340d3956c/products/a1ef6de3-4f6e-4bfb-bc9c-236ed8f86a3b/stock",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches",
+								"3e489f2a-dc0c-4d58-95b1-2fd340d3956c",
+								"products",
+								"a1ef6de3-4f6e-4bfb-bc9c-236ed8f86a3b",
+								"stock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eliminar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Leche Entera 1L\",\n  \"stock\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches/3e489f2a-dc0c-4d58-95b1-2fd340d3956c/products/dec348a8-58f7-4470-973a-db4c560c4320",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches",
+								"3e489f2a-dc0c-4d58-95b1-2fd340d3956c",
+								"products",
+								"dec348a8-58f7-4470-973a-db4c560c4320"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "maximo sucursal",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Leche Entera 1L\",\n  \"stock\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches/top-products",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches",
+								"top-products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buscar producto",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Leche Entera 1L\",\n  \"stock\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{env}}/franchises/e695b75b-1263-4c36-a2ee-26ab22fbf1ae/branches/3e489f2a-dc0c-4d58-95b1-2fd340d3956c/products/search?prefix=leche",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"franchises",
+								"e695b75b-1263-4c36-a2ee-26ab22fbf1ae",
+								"branches",
+								"3e489f2a-dc0c-4d58-95b1-2fd340d3956c",
+								"products",
+								"search"
+							],
+							"query": [
+								{
+									"key": "prefix",
+									"value": "leche"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "env",
+			"value": "https://5i3biv44k3.execute-api.us-east-1.amazonaws.com/v1"
+		}
+	]
+}
